@@ -13,139 +13,143 @@ class MinimumInputValue(Exception):
     pass
 
 
-def player_choice_is_valid(C, checked_idx):
-    return checked_idx in range(C)
+def player_choice_is_valid(C, c):
+    return c in range(C)
 
 
-def starting_game(r, c):
-    matrix = [['0' for y in range(c)] for x in range(r)]
+def starting_game(R, C):
+    matrix = [['0' for y in range(C)] for x in range(R)]
     turns = 0
-    [print(' '.join(matrix[x])) for x in range(r)]
+    print()
+    [print(' '.join(matrix[x])) for x in range(R)]
     return matrix, turns
 
 
-def matrix_is_full(matrix, c):
-    return all([matrix[0][x] != "0" for x in range(c)])
+def matrix_is_full(matrix, C):
+    return all([matrix[0][x] != "0" for x in range(C)])
 
 
-def color_the_choice(matrix, player1, player2):
+def color_pl_turn(matrix, pl1, pl2):
+    print()
     for row in matrix:
         for cell in row:
-            if cell == player1:
+            if cell == pl1:
                 cell = Fore.BLUE + cell + Fore.RESET
-            elif cell == player2:
+            elif cell == pl2:
                 cell = Fore.YELLOW + cell + Fore.RESET
             print(cell, end=" ")
         print()
+    print()
 
 
-def player_turn(matrix, c, matrix_cols, player_sign, player1, player2):
-    if player_choice_is_valid(matrix_cols, c):
+def player_turn(matrix, c, C, pl_sign, pl1, pl2):
+    if player_choice_is_valid(C, c):
         for r in range(len(matrix) - 1, -1, -1):
             if matrix[r][c] == '0':
-                matrix[r][c] = player_sign
-                color_the_choice(matrix, player1, player2)
+                matrix[r][c] = pl_sign
+                color_pl_turn(matrix, pl1, pl2)
                 return r, c
         else:
             raise FullColumnError
     raise InvalidIndexError
 
 
-def check_cell(matrix, r, c, player):
+def check_cell(matrix, r, c, pl_sign):
     if c < 0 or r < 0:
         return False
     try:
-        if matrix[r][c] == player:
+        if matrix[r][c] == pl_sign:
             return True
     except IndexError:
         return False
     return False
 
 
-def check_vertical(matrix, r, c, player, winning_num):
+def vertical(matrix, r, c, pl_sign, win_num):
     try:
-        return all([True if matrix[r + x][c] == player else False for x in range(winning_num)])
+        return all([True if matrix[r + i][c] == pl_sign else False for i in range(win_num)])
     except IndexError:
         return False
 
 
-def check_horizontal(matrix, r, c, player, winning_num):
+def horizontal(matrix, r, c, pl_sign, win_num):
     matches = set()
 
-    for i in range(winning_num):
-        if check_cell(matrix, r, c + i, player):
+    for i in range(win_num):
+        if check_cell(matrix, r, c + i, pl_sign):
             matches.add((r, c + i))
         else:
             break
 
-    for i in range(winning_num):
-        if check_cell(matrix, r, c - i, player):
+    for i in range(win_num):
+        if check_cell(matrix, r, c - i, pl_sign):
             matches.add((r, c - i))
         else:
             break
-    return len(matches) >= winning_num
+    return len(matches) >= win_num
 
 
-def descending_diagonal(matrix, r, c, player, winning_num):
+def descending_diagonal(matrix, r, c, pl_sign, win_num):
     matches = set()
 
-    for i in range(winning_num):
-        if check_cell(matrix, r - i, c - i, player):
+    for i in range(win_num):
+        if check_cell(matrix, r - i, c - i, pl_sign):
             matches.add((r - i, c - i))
         else:
             break
 
-    for i in range(winning_num):
-        if check_cell(matrix, r + i, c + i, player):
+    for i in range(win_num):
+        if check_cell(matrix, r + i, c + i, pl_sign):
             matches.add((r + i, c + i))
         else:
             break
 
-    return len(matches) >= winning_num
+    return len(matches) >= win_num
 
 
-def ascending_diagonal(matrix, r, c, player, winning_num):
+def ascending_diagonal(matrix, r, c, pl_sign, win_num):
     matches = set()
 
-    for i in range(winning_num):
-        if check_cell(matrix, r - i, c + i, player):
+    for i in range(win_num):
+        if check_cell(matrix, r - i, c + i, pl_sign):
             matches.add((r - i, c + i))
         else:
             break
 
-    for i in range(winning_num):
-        if check_cell(matrix, r + i, c - i, player):
+    for i in range(win_num):
+        if check_cell(matrix, r + i, c - i, pl_sign):
             matches.add((r + i, c - i))
         else:
             break
 
-    return len(matches) >= winning_num
+    return len(matches) >= win_num
 
 
-def player_wins(matrix, r, c, player, winning_num):
+def player_wins(matrix, r, c, pl_sign, win_num):
     return any([
-        check_vertical(matrix, r, c, player, winning_num),
-        check_horizontal(matrix, r, c, player, winning_num),
-        ascending_diagonal(matrix, r, c, player, winning_num),
-        descending_diagonal(matrix, r, c, player, winning_num)
+        vertical(matrix, r, c, pl_sign, win_num),
+        horizontal(matrix, r, c, pl_sign, win_num),
+        ascending_diagonal(matrix, r, c, pl_sign, win_num),
+        descending_diagonal(matrix, r, c, pl_sign, win_num)
     ])
 
 
-def want_to_play_again():
-    player_choice = input("Do you want to play again?[Y/N]").lower()
+def play_again():
+    pl_choice = input("Do you want to play again?[Y/N]: ").lower()
 
     while True:
-        if player_choice == "y" or player_choice == "n":
-            return True if player_choice == "y" else False
+        if pl_choice == "y" or pl_choice == "n":
+            return True if pl_choice == "y" else False
         else:
-            print(Fore.RED + "The command should be only [Y/N]! Try again!" + Fore.RESET)
-        player_choice = input().lower()
+            print(Fore.RED + "The command should be only [Y/N]! Try again!\n" + Fore.RESET)
+        pl_choice = input().lower()
 
 
 def play():
     ROWS, COLS = 6, 7
     WINNING_NUM = 4
-    first_player, second_player = '1', '2'
+    first_player = input("Please enter a sign for the first player: ")
+    second_player = input("Please enter a sign for the second player: ")
 
     board, turns = starting_game(ROWS, COLS)
 
@@ -163,7 +167,7 @@ def play():
                 player_turn(board, player_choice_col - 1, COLS, current_player_sign, first_player, second_player)
 
             if player_wins(board, player_row, player_col, current_player_sign, WINNING_NUM):
-                print(Fore.GREEN + f"The winner is PLAYER {current_player_sign}" + Fore.RESET)
+                print(Fore.GREEN + f"The winner is PLAYER {current_player_sign}" + Fore.RESET + "\n")
                 game_over = True
 
             if matrix_is_full(board, COLS):
@@ -178,7 +182,7 @@ def play():
             print(Fore.RED + "Your choice must be an integer in given range only!" + Fore.RESET)
 
         if game_over:
-            if want_to_play_again():
+            if play_again():
                 board, turns = starting_game(ROWS, COLS)
             else:
                 print("Hope to see you soon")

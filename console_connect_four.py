@@ -9,10 +9,6 @@ class InvalidIndexError(Exception):
     pass
 
 
-class MinimumInputValue(Exception):
-    pass
-
-
 def player_choice_is_valid(C, c):
     return c in range(C)
 

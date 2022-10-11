@@ -1,3 +1,3 @@
 # Connect-Four-Game
 
-In progress...
+**In progress...**

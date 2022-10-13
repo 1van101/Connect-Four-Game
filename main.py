@@ -1,7 +1,7 @@
-from four_connection_game.utils.check_for_winner import player_wins
-from four_connection_game.utils.placing_turn import player_turn, matrix_is_full
-from four_connection_game.utils.start_the_game import starting_game, play_again
-from four_connection_game.utils.exceptions import FullColumnError, InvalidIndexError
+from utils.check_for_winner import player_wins
+from utils.placing_turn import player_turn, matrix_is_full
+from utils.start_the_game import starting_game, play_again
+from utils.exceptions import FullColumnError, InvalidIndexError
 from colorama import Fore, Style
 
 

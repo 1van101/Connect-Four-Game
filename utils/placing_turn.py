@@ -1,4 +1,4 @@
-from four_connection_game.utils.exceptions import FullColumnError, InvalidIndexError
+from .exceptions import FullColumnError, InvalidIndexError
 from colorama import Fore
 
 

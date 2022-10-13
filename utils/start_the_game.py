@@ -1,5 +1,6 @@
 from colorama import Fore
 
+
 def starting_game(R, C):
     matrix = [['0' for y in range(C)] for x in range(R)]
     turns = 0
